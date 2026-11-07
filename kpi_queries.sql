@@ -53,3 +53,33 @@ select
    on p.id = i.product_id
    group by c.id
    order by pct_of_total_revenue Desc;
+
+-- Order completion rate
+
+select
+   status, count(*) as order_count, round(count(*)*100.0/(select count(*) from orders),2) as pct_of_total
+   from orders
+   group by status;
+
+-- Support ticket analysis
+
+select
+   category as ticket_category, count(*) as ticket_count, 
+   round(avg(extract(epoch from(resolved_at-created_at))),2) as avg_resolution_hours, 
+    round(avg(satisfaction_score),1) as avg_satisfaction_score
+from support_tickets
+group by category
+order by ticket_count desc;
+
+-- Customer acquisition by month
+
+with month as (
+   select
+      to_char(signup_date, 'YYYY-MM') as signup_month, count(*) new_customers
+      from customers
+      group by signup_month
+  )
+select
+   signup_month, new_customers, sum(new_customers) over(order by signup_month) as cumulative_customers
+   from month
+   order by signup_month asc;
