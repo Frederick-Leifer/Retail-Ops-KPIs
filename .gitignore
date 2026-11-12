@@ -1,0 +1,22 @@
+# macOS
+.DS_Store
+.AppleDouble
+
+# Environment variables and credentials
+.env
+.env.*
+!.env.example
+
+# Local database backups
+*.dump
+*.backup
+*.sqlite
+*.db
+
+# Editor settings
+.vscode/
+.idea/
+
+# Temporary files
+*.tmp
+*.log
