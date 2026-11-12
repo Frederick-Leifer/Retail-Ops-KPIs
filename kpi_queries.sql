@@ -9,7 +9,7 @@ select
 -- Revenue by customer segment
 select 
    c.segment as segment, count(distinct c.id) as customer_count, count(o.id) as order_count, 
-   sum(o.total_amount) as total_revenue, round(avg(o.total_amount),2) as revenue_per_customer
+   sum(o.total_amount) as total_revenue, round(SUM(o.total_amount) / COUNT(DISTINCT c.id),2) as revenue_per_customer
    from customers as c 
    join orders as o
    on c.id = o.customer_id
@@ -21,7 +21,7 @@ select
 
 select
    channel, count(*) as orders, sum(total_amount) as revenue, round(avg(total_amount),2) as avg_order_value, 
-   round(sum(total_amount)/(select sum(total_amount)from orders where status = 'completed'),2)*100 as pct_of_total
+   round(sum(total_amount)*100/(select sum(total_amount)from orders where status = 'completed'),2) as pct_of_total
    from orders
    where status = 'completed'
    group by channel
@@ -65,7 +65,7 @@ select
 
 select
    category as ticket_category, count(*) as ticket_count, 
-   round(avg(extract(epoch from(resolved_at-created_at))),2) as avg_resolution_hours, 
+   round(AVG(EXTRACT(EPOCH FROM (resolved_at - created_at))) / 3600,2) as avg_resolution_hours, 
     round(avg(satisfaction_score),1) as avg_satisfaction_score
 from support_tickets
 group by category
